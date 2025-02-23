@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculo RTC-ERROR</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+            background-color: #f4f4f9;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #4CAF50; /* Fondo verde */
+            color: white; /* Texto blanco */
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #45a049; /* Cambio de color al pasar el ratón */
+        }
+    </style>
+    <script>
+        function calculate() {
+            let multiplicador = parseFloat(document.getElementById('multiplicador').value) || 1;
+            let ia1Primario = parseFloat(document.getElementById('ia1Primario').value) || 0;
+            let ia1Secundario = parseFloat(document.getElementById('ia1Secundario').value) || 1;
+            let ic1Primario = parseFloat(document.getElementById('ic1Primario').value) || 0;
+            let ic1Secundario = parseFloat(document.getElementById('ic1Secundario').value) || 1;
+            let ia2Primario = parseFloat(document.getElementById('ia2Primario').value) || 0;
+            let ia2Secundario = parseFloat(document.getElementById('ia2Secundario').value) || 1;
+            let ic2Primario = parseFloat(document.getElementById('ic2Primario').value) || 0;
+            let ic2Secundario = parseFloat(document.getElementById('ic2Secundario').value) || 1;
+
+            let rtcIa1 = (ia1Primario / ia1Secundario).toFixed(3);
+            let errorIa1 = (((multiplicador / rtcIa1) - 1) * 100).toFixed(3);
+            let rtcIc1 = (ic1Primario / ic1Secundario).toFixed(3);
+            let errorIc1 = (((multiplicador / rtcIc1) - 1) * 100).toFixed(3);
+            let rtcIa2 = (ia2Primario / ia2Secundario).toFixed(3);
+            let errorIa2 = (((multiplicador / rtcIa2) - 1) * 100).toFixed(3);
+            let rtcIc2 = (ic2Primario / ic2Secundario).toFixed(3);
+            let errorIc2 = (((multiplicador / rtcIc2) - 1) * 100).toFixed(3);
+
+            let errorProm1 = ((parseFloat(errorIa1) + parseFloat(errorIc1)) / 2).toFixed(3);
+            let errorProm2 = ((parseFloat(errorIa2) + parseFloat(errorIc2)) / 2).toFixed(3);
+            let errorDeProm = ((parseFloat(errorProm1) + parseFloat(errorProm2)) / 2).toFixed(3);
+            let multiplicadorEncontrado = ((parseFloat(rtcIa1) + parseFloat(rtcIa2) + parseFloat(rtcIc1) + parseFloat(rtcIc2)) / 4).toFixed(3);
+
+            document.getElementById('rtcIa1').textContent = `RTC Ia1: ${rtcIa1}`;
+            document.getElementById('errorIa1').textContent = `% ERROR Ia1: ${errorIa1}%`;
+            document.getElementById('rtcIc1').textContent = `RTC Ic1: ${rtcIc1}`;
+            document.getElementById('errorIc1').textContent = `% ERROR Ic1: ${errorIc1}%`;
+            document.getElementById('rtcIa2').textContent = `RTC Ia2: ${rtcIa2}`;
+            document.getElementById('errorIa2').textContent = `% ERROR Ia2: ${errorIa2}%`;
+            document.getElementById('rtcIc2').textContent = `RTC Ic2: ${rtcIc2}`;
+            document.getElementById('errorIc2').textContent = `% ERROR Ic2: ${errorIc2}%`;
+            document.getElementById('errorProm1').textContent = `ERROR PROM 1: ${errorProm1}%`;
+            document.getElementById('errorProm2').textContent = `ERROR PROM 2: ${errorProm2}%`;
+            document.getElementById('errorDeProm').textContent = `ERROR DE PROM: ${errorDeProm}%`;
+            document.getElementById('multiplicadorEncontrado').textContent = `MULTIPLICADOR ENCONTRADO: ${multiplicadorEncontrado}`;
+        }
+
+        function clearFields() {
+            // Limpiar todos los campos
+            document.getElementById('multiplicador').value = '';
+            document.getElementById('ia1Primario').value = '';
+            document.getElementById('ia1Secundario').value = '';
+            document.getElementById('ic1Primario').value = '';
+            document.getElementById('ic1Secundario').value = '';
+            document.getElementById('ia2Primario').value = '';
+            document.getElementById('ia2Secundario').value = '';
+            document.getElementById('ic2Primario').value = '';
+            document.getElementById('ic2Secundario').value = '';
+
+            // Limpiar los resultados
+            document.getElementById('rtcIa1').textContent = '';
+            document.getElementById('errorIa1').textContent = '';
+            document.getElementById('rtcIc1').textContent = '';
+            document.getElementById('errorIc1').textContent = '';
+            document.getElementById('rtcIa2').textContent = '';
+            document.getElementById('errorIa2').textContent = '';
+            document.getElementById('rtcIc2').textContent = '';
+            document.getElementById('errorIc2').textContent = '';
+            document.getElementById('errorProm1').textContent = '';
+            document.getElementById('errorProm2').textContent = '';
+            document.getElementById('errorDeProm').textContent = '';
+            document.getElementById('multiplicadorEncontrado').textContent = '';
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll("input").forEach(input => {
+                input.addEventListener("input", calculate);
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Calculadora Avanzada</h1>
+
+    <div class="result">
+        <input id="multiplicador" type="number" placeholder="Multiplicador nominal">
+    </div>
+
+    <div class="result">
+        <input id="ia1Primario" type="number" placeholder="Ia1 Primario">
+        <input id="ia1Secundario" type="number" placeholder="Ia1 Secundario">
+        <p id="rtcIa1"></p>
+        <p id="errorIa1"></p>
+    </div>
+
+    <div class="result">
+        <input id="ic1Primario" type="number" placeholder="Ic1 Primario">
+        <input id="ic1Secundario" type="number" placeholder="Ic1 Secundario">
+        <p id="rtcIc1"></p>
+        <p id="errorIc1"></p>
+        <p id="errorProm1"></p>
+    </div>
+
+    <div class="result">
+        <input id="ia2Primario" type="number" placeholder="Ia2 Primario">
+        <input id="ia2Secundario" type="number" placeholder="Ia2 Secundario">
+        <p id="rtcIa2"></p>
+        <p id="errorIa2"></p>
+    </div>
+
+    <div class="result">
+        <input id="ic2Primario" type="number" placeholder="Ic2 Primario">
+        <input id="ic2Secundario" type="number" placeholder="Ic2 Secundario">
+        <p id="rtcIc2"></p>
+        <p id="errorIc2"></p>
+        <p id="errorProm2"></p>
+    </div>
+
+    <div class="result">
+        <p id="errorDeProm"></p>
+        <p id="multiplicadorEncontrado"></p>
+    </div>
+
+    <button onclick="clearFields()">Limpiar Campos</button>
+</body>
+</html>
